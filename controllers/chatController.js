@@ -1,10 +1,15 @@
-// controllers/chatController.js
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from "fs";
 import path from "path";
 
+// Pastikan folder logs sudah ada
+const logDir = path.join("logs");
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir);
+}
+const logPath = path.join(logDir, "chat.log");
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const logPath = path.join("logs", "chat.log");
 
 export async function askQuestion(req, res) {
   const { prompt } = req.query;
@@ -18,11 +23,18 @@ export async function askQuestion(req, res) {
     const text = response.text();
 
     // Simpan log
-    fs.appendFileSync(logPath, `[${new Date().toISOString()}] Prompt: ${prompt}\nJawaban: ${text}\n\n`);
+    fs.appendFileSync(
+      logPath,
+      `[${new Date().toISOString()}] Prompt: ${prompt}\nJawaban: ${text}\n\n`
+    );
 
     res.json({ result: text });
   } catch (err) {
-    console.error("❌ Gagal generate:", err.message);
-    res.status(500).json({ error: "Gagal memproses permintaan" });
+    // Log seluruh error object untuk debugging
+    console.error("❌ Gagal generate:", err);
+    res.status(500).json({
+      error: "Gagal memproses permintaan",
+      detail: err.message, // Bisa tambahkan err.stack jika perlu
+    });
   }
 }

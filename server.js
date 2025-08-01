@@ -5,7 +5,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import model from "./chat.js";
 import { logChat } from "./utils/logger.js";
-import app from "./index.js";
+
 
 dotenv.config();
 const app = express();
@@ -64,10 +64,7 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-// app.listen(PORT, () => {
-//   console.log(`🚀 Server jalan di http://localhost:${PORT}`);
-// });
-
 app.listen(PORT, () => {
   console.log(`🚀 Server jalan di http://localhost:${PORT}`);
 });
+
